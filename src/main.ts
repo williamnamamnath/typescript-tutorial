@@ -1,11 +1,18 @@
-let username = "Will"
-console.log(username);
+let myName: string; 
+let someNumber: number;
+let isTrue: boolean;
+let anyType: any;
 
-let a: number = 12;
-let b: number = 6;
-let c: number = 2;
+myName = 'Will'
+someNumber = 21
+isTrue = true
+anyType = 2024
 
-console.log(a / b);
-console.log(c * b);
+const sum = (a: number, b: string) => {
+    return a + b
+}
 
+let postId: string | number;
+let isActive: number | boolean | string;
 
+let reg: RegExp = /\w+/g;
