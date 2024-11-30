@@ -1,4 +1,4 @@
-# Learning TypeScript 
+# 👨‍💻 Learning TypeScript 
 
 This repository tracks my progress and code while I'm working on a Typescript tutorial. 
 
