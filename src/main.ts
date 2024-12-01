@@ -1,114 +1,130 @@
-let stringArr = ['one', 'apple', 'car'];
+//Type aliases
+type stringOrNumber = string | number;
 
-let sportsData = ['soccer', 'football', 'hockey', 2024];
+type stringOrNumberArr = (string | number)[];
 
-let mixedData = ['table', 1998, true]; 
-
-
-stringArr[0] = 'Will'
-stringArr.push('mouse')
-
-sportsData[0] = 2016
-sportsData.unshift('basketball')
-
-//These expressions are correct since they are valid types
-sportsData = stringArr
-mixedData = sportsData
-
-//If blank, any type can be valid in the "test" variable
-let test = []
-
-let strings: string[] = []
-strings.push('computer')
-
-//Tuple - setting specific conditions to an array
-let myTuple: [string, number, boolean] = ['Will', 1998, true]
-
-let mixed = ['William', 1, false]
-
-//mixed accepts strings, numbers and booleans
-mixed = myTuple
-
-
-//Objects
-let myObj: object;
-myObj = [];
-
-console.log(typeof myObj);
-
-myObj = strings;
-myObj = {} //Another way of saying "object"
-
-const exampleObj = {
-    prop1: 'Will',
-    prop2: true
-}
-
-//This is fine since prop2 is a boolean
-exampleObj.prop2 = false
-
-//To make a property optional, you add "?" to a property.
-type Athlete = {
+interface Athlete {
     name: string,
     active?: boolean, 
-    sports: (string | number)[]
+    sports: stringOrNumberArr //or (string | number)[]
 }
 
-//Declaring 'interface' instead of type is also valid, but make sure to remove '='
-// interface Athlete {
-//     name: string,
-//     active?: boolean, 
-//     sports: (string | number)[]
-// }
+//This is an example of a type alias, replacing the code with an 'alias'
+type userId = stringOrNumber;
 
-//Interface would be preferrable to use when defining a class, but a type also works with objects
+//In terms of type vs interface, an interface can be seen as an object or a class whereas a type can be seen as an alias
 
-let sportsObj: Athlete = {
-    name: 'LeBron',
-    active: true,
-    sports: [2003, 'basketball']
+
+//Literal types:
+let myName: 'Will'
+
+//Example of DRY practice
+let userName: 'Will' |'Mark' | 'Dave'
+userName = 'Dave' //Only the names mentioned above can be used for the userName variable
+
+
+//Functions
+const add = (a: number, b: number): number => {
+    return a + b;
+}
+
+//'Void' is for functions that do not return anything
+const logMsg = (message: any): void => {
+    console.log(message);
+}
+
+logMsg('Hello');
+logMsg(add(2, 3));
+
+//The following wouldn't work since the 'add' function expects numbers as a return
+// logMsg(add('a', 3));
+
+//Functions does not require an arrow like arrow functions do
+let subtract = function (c: number, d: number): number {
+    return c - d;
+}
+
+//Both type or interface work for the following mathFunction
+// type mathFunction = (a: number, b: number) => number
+
+interface mathFunction {
+    (a: number, b: number): number
 } 
 
-let newSportsObj: Athlete = {
-    name: 'Jokic',
-    active: true,
-    sports: [2015, 'basketball']
-} 
+//mathFunction is an alias in this case
+let multiply: mathFunction = function (c,d) {
+    return c * d
+}
 
-let thirdSportsObj: Athlete = {
-    name: 'Durant',
-    sports: [2007, 'basketball']
-} 
-
-//This is valid since both have the same types and properties
-//sportsObj = newSportsObj
-
-//This is also valid since the "active" property is optional as initially defined
-//thirdSportsObj = sportsObj
+logMsg(multiply(2, 2));
 
 
-//The following can be done instead of defining the object and its properties and types
-const greetBallPlayer = (athlete: Athlete) => {
-    if (athlete.name) {
-        return `Hello ${athlete.name.toUpperCase()}!`
+//Optional parameters
+const addAll = (a: number, b: number, c?: number): number => {
+    if (typeof c !== 'undefined') {
+        return a + b + c;
     }
-    return 'Hello!'
+    return a + b
 }
 
-//The following will return 'Hello Durant!'
-console.log(greetBallPlayer(thirdSportsObj));
-
-
-//Enums are not a type-level addition to Javascript but something added to the language and runtime
-
-
-//Grade 'U' would start at 0 by default, but we can set a default value to 'U', and the next values will follow that new order
-enum Grade {
-    U = 1,
-    D,
-    C,
-    B,
-    A
+//Default parameter value for 'a' and 'c'
+const sumAll = (a: number = 10, b: number, c: number = 2): number => {
+        return a + b + c;
 }
 
-console.log(Grade.U);
+logMsg(addAll(2, 3, 2));
+logMsg(addAll(2, 3));
+logMsg(sumAll(2, 3));
+
+//To skip the value assigned for 'a' when calling the function. This works since 10 is passed as the default value for 'a', 3 is called for 'b' and 'c' is already assigned the default value of 2
+logMsg(sumAll(undefined, 3));
+
+
+//Rest parameters
+const total = (...nums: number[]): number => {
+    return nums.reduce((prev, curr) => prev + curr)
+}
+
+const otherTotal = (a: number, ...nums: number[]): number => {
+    return a + nums.reduce((prev, curr) => prev + curr)
+}
+
+//The required parameter for otherTotal should be the first entry, the 'rest' will follow after the first entry
+logMsg(otherTotal(1, 2));
+
+
+//The 'Never' type is explicitly for functions that throw errors
+const createErr = (errorMsg: string): never => {
+    throw new Error(errorMsg)
+}
+
+//Make sure to throw an error for the 'never' type, as the function could potentially contain an endless loop
+const infinite = () => {
+    let i: number = 1
+    while (true) {
+        i++
+        if (i > 100) break //This is method to throw an error or stop the function in this case
+    }
+}
+
+//Custom type guard
+const isNumber = (value: any): boolean => {
+    return typeof value === 'number'
+    ? true : false
+}
+
+
+const numOrString = (value: number | string): string => {
+    if (typeof value === 'string') {
+        return 'string'
+    }
+    if (typeof value === 'number') {
+        return 'number'
+    }
+    // or
+    // if (isNumber(value)) {
+    //     return 'number'
+    // }
+    //We are returning a never type below, needs an explicit return
+    return createErr('This should not happen.')
+}

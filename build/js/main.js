@@ -1,77 +1,52 @@
 "use strict";
-let stringArr = ['one', 'apple', 'car'];
-let sportsData = ['soccer', 'football', 'hockey', 2024];
-let mixedData = ['table', 1998, true];
-stringArr[0] = 'Will';
-stringArr.push('mouse');
-sportsData[0] = 2016;
-sportsData.unshift('basketball');
-//These expressions are correct since they are valid types
-sportsData = stringArr;
-mixedData = sportsData;
-//If blank, any type can be valid in the "test" variable
-let test = [];
-let strings = [];
-strings.push('computer');
-//Tuple - setting specific conditions to an array
-let myTuple = ['Will', 1998, true];
-let mixed = ['William', 1, false];
-//mixed accepts strings, numbers and booleans
-mixed = myTuple;
-//Objects
-let myObj;
-myObj = [];
-console.log(typeof myObj);
-myObj = strings;
-myObj = {}; //Another way of saying "object"
-const exampleObj = {
-    prop1: 'Will',
-    prop2: true
+//In terms of type vs interface, an interface can be seen as an object or a class whereas a type can be seen as an alias
+//Literal types:
+let myName;
+//Example of DRY practice
+let userName;
+userName = 'Dave'; //Only the names mentioned above can be used for the userName variable
+//Functions
+const add = (a, b) => {
+    return a + b;
 };
-//This is fine since prop2 is a boolean
-exampleObj.prop2 = false;
-//Declaring 'interface' instead of type is also valid, but make sure to remove '='
-// interface Athlete {
-//     name: string,
-//     active?: boolean, 
-//     sports: (string | number)[]
-// }
-//Interface would be preferrable to use when defining a class, but a type also works with objects
-let sportsObj = {
-    name: 'LeBron',
-    active: true,
-    sports: [2003, 'basketball']
+//'Void' is for functions that do not return anything
+const logMsg = (message) => {
+    console.log(message);
 };
-let newSportsObj = {
-    name: 'Jokic',
-    active: true,
-    sports: [2015, 'basketball']
+logMsg('Hello');
+logMsg(add(2, 3));
+//The following wouldn't work since the 'add' function expects numbers as a return
+// logMsg(add('a', 3));
+//Functions does not require an arrow like arrow functions do
+let subtract = function (c, d) {
+    return c - d;
 };
-let thirdSportsObj = {
-    name: 'Durant',
-    sports: [2007, 'basketball']
+//mathFunction is an alias in this case
+let multiply = function (c, d) {
+    return c * d;
 };
-//This is valid since both have the same types and properties
-//sportsObj = newSportsObj
-//This is also valid since the "active" property is optional as initially defined
-//thirdSportsObj = sportsObj
-//The following can be done instead of defining the object and its properties and types
-const greetBallPlayer = (athlete) => {
-    if (athlete.name) {
-        return `Hello ${athlete.name.toUpperCase()}!`;
+logMsg(multiply(2, 2));
+//Optional parameters
+const addAll = (a, b, c) => {
+    if (typeof c !== 'undefined') {
+        return a + b + c;
     }
-    return 'Hello!';
+    return a + b;
 };
-//The following will return 'Hello Durant!'
-console.log(greetBallPlayer(thirdSportsObj));
-//Enums are not a type-level addition to Javascript but something added to the language and runtime
-//Grade 'U' would start at 0 by default, but we can set a default value to 'U', and the next values will follow that new order
-var Grade;
-(function (Grade) {
-    Grade[Grade["U"] = 1] = "U";
-    Grade[Grade["D"] = 2] = "D";
-    Grade[Grade["C"] = 3] = "C";
-    Grade[Grade["B"] = 4] = "B";
-    Grade[Grade["A"] = 5] = "A";
-})(Grade || (Grade = {}));
-console.log(Grade.U);
+//Default parameter value for 'a' and 'c'
+const sumAll = (a = 10, b, c = 2) => {
+    return a + b + c;
+};
+logMsg(addAll(2, 3, 2));
+logMsg(addAll(2, 3));
+logMsg(sumAll(2, 3));
+//To skip the value assigned for 'a' when calling the function. This works since 10 is passed as the default value for 'a', 3 is called for 'b' and 'c' is already assigned the default value of 2
+logMsg(sumAll(undefined, 3));
+//Rest parameters
+const total = (...nums) => {
+    return nums.reduce((prev, curr) => prev + curr);
+};
+const otherTotal = (a, ...nums) => {
+    return a + nums.reduce((prev, curr) => prev + curr);
+};
+logMsg(total(1, 2));
