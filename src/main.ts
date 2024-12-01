@@ -1,162 +1,101 @@
-// class Coder {
-//     //Need to delcare the property first
-//     name: string
-//     music: string
-//     age: number
-//     lang: string
+//Index signatures
 
-//     //And mention it again in the constructor
-//     constructor(
-        // name: string, 
-        // music: string, 
-        // age: number, 
-//         lang: string
-//     ) {
-//         this.name = name
-//         this.music = music
-//         this.age = age
-//         this.lang = lang
-//     } //The following is not DRY, better to reformat
+interface TransactionObj {
+    [index: string]: number //unions can be used as well
+}
+
+// interface TransactionObj {
+//    [index: string]: number //also valid
+//     Pizza: number,
+//     Books: number,
+//     Job: number
 // }
 
-
-class Coder {
-
-    //The '!' is an assertion to show that we won't be using secondLang right away. Not recommended for beginners
-    secondLang!: string
-
-    //Assignments in the body of the constructor are not required
-    constructor(
-        public readonly name: string, 
-        public music: string, 
-        private age: number, 
-        //Optional parameter in this case
-        protected lang: string = 'Typescript'
-    ) {
-        this.name = name
-        this.music = music
-        this.age = age
-        this.lang = lang
-    } 
-
-    public getAge() {
-        return `Hello, I am ${this.age}.`
-    }
+const todaysTransactions: TransactionObj = {
+    Pizza: -10,
+    Books: -5,
+    Job: 50
 }
 
-const Will = new Coder('Will', 'Rock', 26)
-console.log(Will.getAge());
+console.log(todaysTransactions.Pizza);
+console.log(todaysTransactions['Pizza']);
 
+let prop: string = 'Pizza'
+console.log(todaysTransactions[prop]);
 
-//The following console logs is not valid since the property is private and can only be accessed within its class. We can access a method, but not the property explicitly if private or protected
-
-//In dev tools, the logs will still be displayed as it is valid JS code, but not appropriate for TS
-//console.log(Will.age);
-//console.log(Will.lang);
-
-
-class WebDev extends Coder {
-    
-    constructor(
-        public computer: string,
-        name: string, 
-        music: string, 
-        age: number,
-    ) {
-        super(name, music, age)
-        this.computer = computer
+const todaysNet = (transactions: TransactionObj): number => {
+    let total = 0
+    for (const transaction in transactions) {
+        total += transactions[transaction]
     }
-
-    public getLang() {
-        return `I write ${this.lang}.`
-    }
+    return total
 }
 
-const LP = new WebDev('Mac', 'LeBron', 'Lofi', 25)
-console.log(LP.getLang());
-// console.log(LP.age);
-// console.log(LP.lang);
+console.log(todaysNet(todaysTransactions));
 
+console.log(todaysTransactions['Will']) //returns undefined. TS allows this but index signatures are not entirely safe
 
-interface Musician {
+//We can do write an interface like so 
+// interface Student {
+//     name: string,
+//     GPA: number,
+//     classes?: number[] //'?' means optional
+// }
+
+//Or this would work as well
+interface Student {
+    //[key: string]: string | number | number[] | undefined
     name: string,
-    instrument: string,
-    play(action: string): string
+    GPA: number,
+    classes?: number[] //'?' means optional
 }
 
-//All properties from Musician must match the ones in the Guitarist class
-class Guitarist implements Musician {
-    name: string
-    instrument: string
-
-    constructor(name: string, instrument: string) {
-        this.name = name
-        this.instrument = instrument
-    }
-
-    play(action: string) {
-        return `${this.name} ${action} the ${this.instrument}.`
-    }
+const student: Student = {
+    name: 'Will',
+    GPA: 3.5,
+    classes: [100, 200] //'?' means optional
 }
 
-const Mark = new Guitarist('Jimmy', 'guitar')
-console.log(Mark.play('strums'));
+//Even if we don't have a 'test' key yet, this is still valid thanks to the index signature in the Student interface. "Maybe there will be a 'test' created eventually"
+//console.log(student.test);
 
+//If key is not defined in the interface, there is another way to proceed. The console log below results in an error since the key is commented out above. 
+// for (const key in student) {
+//     console.log(`${key}: ${student[key]}`);
+// }
 
-class Peeps {
-    //Static means that 'count' doesn't apply to any instanciation of the class, but rather to to the class directly itself
-    static count: number = 0
-
-    static getCount(): number {
-        return Peeps.count
-    }
-
-    public id: number
-    constructor(public name: string) {
-        this.name = name
-        //When ++ is written first (and not on the right), it means that count will increment first. So count will start at 1 instead of 0 when the first instanciation of this class is created
-        this.id = ++Peeps.count
-    }
+//This works even though the key is not explicitly defined. keyof allows us to use the type literals as defined in the Student interface
+for (const key in student) {
+    console.log(`${key}: ${student[key as keyof Student]}`);
 }
 
-const John = new Peeps('John')
-const Steve = new Peeps('Steve')
-const Amy = new Peeps('Amy')
+//This will reference the types used in the 'student' const, which are strings, numbers and array of numbers
+Object.keys(student).map(key => {
+    console.log(student[key as keyof typeof student]);
+})
 
-console.log(Peeps.count);
-console.log(Steve.id);
-console.log(Amy.id);
-console.log(John.id);
-
-
-class Bands {
-    private dataState: string[]
-
-    constructor() {
-        this.dataState = []
-    }
-
-    public get data(): string[] {
-        return this.dataState
-    }
-
-    //Setters cannot return a value
-    public set data(value: string[]) {
-        if (Array.isArray(value) && value.every(el => 
-            typeof el === 'string')) {
-                this.dataState = value
-                return
-            } else throw new Error('Param is not an array of strings')
-    }
+const logStudentKey = (student: Student, key: keyof Student): void => {
+    console.log(`Student ${key}: ${student[key]}`)
 }
 
-const myBands = new Bands()
-myBands.data = ['Bon Jovi', 'Metallica']
+logStudentKey(student, 'GPA')
+logStudentKey(student, 'name')
 
-//How to use the getter
-console.log(myBands.data);
-myBands.data = [...myBands.data, 'Linkin Park']
-console.log(myBands.data);
 
-//Checking for an error. The following recognizes that 5150 is not a string. Also, if brackets weren't inserted, an error would also be thrown as type 'string is not assignable to type 'string[]'
-//myBands.data = ['Van Halen', 5150]
+// interface Incomes {
+//     [key: string]: number
+// }
+
+type Streams = 'salary' | 'bonus' | 'sidehustle'
+type Incomes = Record<Streams, number | string>
+
+const monthlyIncomes: Incomes = {
+    salary: 500,
+    bonus: 100,
+    sidehustle: 250
+}
+
+for (const revenue in monthlyIncomes) {
+    console.log(monthlyIncomes[revenue as keyof Incomes]);
+    
+}
