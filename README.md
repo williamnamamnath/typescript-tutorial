@@ -15,3 +15,4 @@ Visit the various commits for more information.
 - Basic types and union types
 - Arrays and objects, brief comparison of type vs interface, enums
 - Type aliases, the literal and never type, functions, optional and rest parameters
+- Type assertions/type casting, assertions, working with the DOM
