@@ -28,20 +28,20 @@ const isTrue = <T>(arg: T): { arg: T, is: boolean } => {
     return { arg, is: !!arg }
 }
 
-console.log(isTrue(false));
-console.log(isTrue(0));
-console.log(isTrue(true));
-console.log(isTrue(1));
-console.log(isTrue('Will'));
-console.log(isTrue(''));
-console.log(isTrue(null));
-console.log(isTrue(undefined));
-console.log(isTrue({}));
-console.log(isTrue({ name: 'Will' }));
-console.log(isTrue([]));
-console.log(isTrue([1, 2, 3]));
-console.log(isTrue(NaN));
-console.log(isTrue(-0));
+console.log(isTrue(false)); //returns {arg: false, is: false}
+console.log(isTrue(0)); //returns {arg: 0, is: false}
+console.log(isTrue(true)); //returns {arg: true, is: true}
+console.log(isTrue(1)); //returns {arg: 1, is: true}
+console.log(isTrue('Will')); //returns {arg: 'Will', is: true}
+console.log(isTrue('')); //returns {arg: '', is: false}
+console.log(isTrue(null)); //returns {arg: null, is: false}
+console.log(isTrue(undefined)); //returns {arg: undefined, is: false}
+console.log(isTrue({})); //returns {arg: {…}, is: false}
+console.log(isTrue({ name: 'Will' })); //returns {arg: {…}, is: true}
+console.log(isTrue([])); //returns {arg: Array(0), is: false}
+console.log(isTrue([1, 2, 3])); //returns {arg: Array(3), is: true}
+console.log(isTrue(NaN)); //returns {arg: NaN, is: false}
+console.log(isTrue(-0)); //returns {arg: -0, is: false}
 
 
 interface booleanCheck<T> {
@@ -69,7 +69,7 @@ const processUser = <T extends HasId>(user: T): T => {
     return user
 }
 
-console.log(processUser({ id: 1, name: 'Will' }));
+console.log(processUser({ id: 1, name: 'Will' })); 
 
 //This wouldn't work as when we're calling the 'processUser' function, we're missing the HasId type
 //console.log(processUser({ name: 'Will' }));
@@ -129,8 +129,8 @@ const usersArray = [
 ]
 
 //When typing out a string hwn calling the getUsersProperty function, Intellisense gives us a list of objects to choose from usersArray defined above
-console.log(getUsersProperty(usersArray, "email"))
-console.log(getUsersProperty(usersArray, "username"))
+console.log(getUsersProperty(usersArray, "email")) //returns (2) ['Sincere@april.biz', 'Shanna@melissa.tv']
+console.log(getUsersProperty(usersArray, "username")) //returns (2) ['Bret', 'Antonette']
 
 
 //Using a generic in a class
