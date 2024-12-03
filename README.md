@@ -28,4 +28,4 @@ The different commits show what I've learned in each of the chapters below.
 
 ##  🛠 My List App - A TypeScript Project
 
-You may find my (in-progress) TypeScript project by visiting its own separate [repository](https://github.com/williamnamamnath/list-app)
+You may find my (in-progress) TypeScript project by visiting its own separate [repository](https://github.com/williamnamamnath/list-app).
