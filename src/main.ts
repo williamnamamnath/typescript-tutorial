@@ -1,164 +1,173 @@
-//Generics act as a placeholder for the type of a value
+//Utility types
 
-const stringEcho = (arg: string): string => arg 
 
-//or
-
-//<x> is a type variable/parameter. The example below is a generic
-const echo = <T>(arg: T): T => arg
-
-const isObj = <T>(arg: T): boolean => {
-    return (typeof arg === 'object' && !Array.isArray(arg) && arg !== null)
+//Partial type
+interface Assignment {
+    studentId: string,
+    title: string,
+    grade: number,
+    verified?: boolean //optional 
 }
 
-console.log(isObj(true)); //returns false
-console.log(isObj('John')); //returns false
-console.log(isObj([1, 2, 3])); //returns false
-console.log(isObj({ name: 'John' })); //returns true
-console.log(isObj(null)); //returns false
-
-
-const isTrue = <T>(arg: T): { arg: T, is: boolean } => {
-    if (Array.isArray(arg) && !arg.length) {
-        return { arg, is: false }
-    }
-    if (isObj(arg) && !Object.keys(arg as keyof T).length) {
-        return { arg, is: false }
-    }
-    return { arg, is: !!arg }
+//We won't require ALL of the props from assignment, which is why we used the Partial keyword
+const updateAssignment = (assign: Assignment, propsToUpdate: Partial<Assignment>): Assignment => {
+    return {...assign, ...propsToUpdate}
 }
 
-console.log(isTrue(false)); //returns {arg: false, is: false}
-console.log(isTrue(0)); //returns {arg: 0, is: false}
-console.log(isTrue(true)); //returns {arg: true, is: true}
-console.log(isTrue(1)); //returns {arg: 1, is: true}
-console.log(isTrue('Will')); //returns {arg: 'Will', is: true}
-console.log(isTrue('')); //returns {arg: '', is: false}
-console.log(isTrue(null)); //returns {arg: null, is: false}
-console.log(isTrue(undefined)); //returns {arg: undefined, is: false}
-console.log(isTrue({})); //returns {arg: {…}, is: false}
-console.log(isTrue({ name: 'Will' })); //returns {arg: {…}, is: true}
-console.log(isTrue([])); //returns {arg: Array(0), is: false}
-console.log(isTrue([1, 2, 3])); //returns {arg: Array(3), is: true}
-console.log(isTrue(NaN)); //returns {arg: NaN, is: false}
-console.log(isTrue(-0)); //returns {arg: -0, is: false}
-
-
-interface booleanCheck<T> {
-    value: T,
-    is: boolean
+const assign1: Assignment = {
+    studentId: 'compsci123',
+    title: 'Final project',
+    grade: 0
 }
 
-const checkBooleanValue = <T>(arg: T): booleanCheck<T> => {
-    if (Array.isArray(arg) && !arg.length) {
-        return { value: arg, is: false }
-    }
-    if (isObj(arg) && !Object.keys(arg as keyof T).length) {
-        return { value: arg, is: false }
-    }
-    return { value: arg, is: !!arg }
+console.log(updateAssignment(assign1, { grade: 80 }));
+const assignGraded: Assignment = updateAssignment(assign1, { grade: 80 })
+
+
+//Required and Readonly types
+
+//All keys from Assignment will need to be used
+const recordAssignment = (assign: Required<Assignment>): Assignment => {
+    return assign
+}
+
+//We can't overwrite any of the Assignment properties
+const assignVerified: Readonly<Assignment> = {
+    ... assignGraded, verified: true
+}
+
+//This doesn't work since it is a Readonly property
+//assignVerified.grade = 90
+
+//We're missing a property, it is a Required Assignment and verified is not there
+//recordAssignment(assignGraded)
+//To make this work, we can do the following
+//recordAssignment({ ...assignGraded, verified: true })
+
+
+//Record type
+
+//The keys and values will be strings in this caase
+const hexColorMap: Record<string, string> = {
+    red: "FF0000",
+    green: "00FF00"
+}
+
+type Students = 'Sarah' | 'Mark'
+type LetterGrades = 'A' | 'B' | 'C' | 'D' 
+
+const finalGrades: Record<Students, LetterGrades> = {
+    Sarah: 'B',
+    Mark: 'A'
+}
+
+interface Grades {
+    assign1: number,
+    assign2: number
+}
+
+const gradeData: Record<Students, Grades> = {
+    Sarah: { assign1: 85, assign2: 82 },
+    Mark: { assign1: 90, assign2: 92 }
 }
 
 
-interface HasId {
-    id: number
+//Pick and Omit types
+
+//We pick what we want to use from the Assignment interface
+type AssignResult = Pick<Assignment, 'studentId' | 'grade'>
+
+//All properties that were picked are used, so no issues here
+const score: AssignResult = {
+    studentId: 'k123',
+    grade: 85
 }
 
-//Narrowing the generic type by extending the type value <T>, the type will need to have an 'id' property
-const processUser = <T extends HasId>(user: T): T => {
-    return user
+
+type AssignPreview = Omit<Assignment, 'grade' | 'verified'>
+
+//This works since we used all of the keys except the ones we omit previously. If grade was used below, there would be errors
+const preview: AssignPreview = {
+    studentId: 'k123',
+    title: 'Final project'
 }
 
-console.log(processUser({ id: 1, name: 'Will' })); 
 
-//This wouldn't work as when we're calling the 'processUser' function, we're missing the HasId type
-//console.log(processUser({ name: 'Will' }));
+//Exclude and Extract types
 
-//T can be seen as an object that has an id, K is the keys of T (the user objects)
-const getUsersProperty = <T extends HasId, K extends keyof T>(users: T[], key: K): T[K][] => {
-    return users.map(user => user[key])
+//We exclude 'D' from the letters available
+type adjustedGrade = Exclude<LetterGrades, 'D'>
+
+//We're only interested in 'A' and 'B', we're "extracting" them
+type highGrades = Extract<LetterGrades, 'A' | 'B'>
+
+
+//Nonnullable type
+
+type AllPossibleGrades = 'Will' | 'Mark' | null | undefined
+
+//This excludes null and undefined from the AllPossibleGrades type
+type NamesOnly = NonNullable<AllPossibleGrades>
+
+
+
+//ReturnType
+
+//type newAssign = { title: string, points: number }
+
+const createNewAssign = (title: string, points: number) => {
+    return { title, points}
 }
 
-const usersArray = [
-    {
-        "id": 1,
-        "name": "Leanne Graham",
-        "username": "Bret",
-        "email": "Sincere@april.biz",
-        "address": {
-            "street": "Kulas Light",
-            "suite": "Apt. 556",
-            "city": "Gwenborough",
-            "zipcode": "92998-3874",
-            "geo": {
-                "lat": "-37.3159",
-                "lng": "81.1496"
-            }
-        },
-        "phone": "1-770-736-8031 x56442",
-        "website": "hildegard.org",
-        "company": {
-            "name": "Romaguera-Crona",
-            "catchPhrase": "Multi-layered client-server neural-net",
-            "bs": "harness real-time e-markets"
-        }
-    },
-    {
-        "id": 2,
-        "name": "Ervin Howell",
-        "username": "Antonette",
-        "email": "Shanna@melissa.tv",
-        "address": {
-            "street": "Victor Plains",
-            "suite": "Suite 879",
-            "city": "Wisokyburgh",
-            "zipcode": "90566-7771",
-            "geo": {
-                "lat": "-43.9509",
-                "lng": "-34.4618"
-            }
-        },
-        "phone": "010-692-6593 x09125",
-        "website": "anastasia.net",
-        "company": {
-            "name": "Deckow-Crist",
-            "catchPhrase": "Proactive didactic contingency",
-            "bs": "synergize scalable supply-chains"
-        }
-    },
-]
+//If we were to change createNewAssign, otherAssign would consequently update by itself rather than having to explictly modify the newAssign after every modification
+type otherAssign = ReturnType<typeof createNewAssign>
 
-//When typing out a string hwn calling the getUsersProperty function, Intellisense gives us a list of objects to choose from usersArray defined above
-console.log(getUsersProperty(usersArray, "email")) //returns (2) ['Sincere@april.biz', 'Shanna@melissa.tv']
-console.log(getUsersProperty(usersArray, "username")) //returns (2) ['Bret', 'Antonette']
+const tsAssign: otherAssign = createNewAssign('Utility Types', 100)
+console.log(tsAssign);
 
 
-//Using a generic in a class
-class StateObj<T> {
-    private data: T
 
-    constructor(value: T) {
-        this.data = value
-    }
+//Parameters type
 
-    get state(): T {
-        return this.data
-    }
+type AssignParams = Parameters<typeof createNewAssign>
 
-    set state(value: T) {
-        this.data = value
-    }
+const assignArgs: AssignParams = ['Generics', 100]
+
+const tsAssign2: otherAssign = createNewAssign(...assignArgs)
+console.log(tsAssign2);
+
+
+
+//Awaited type - helps with the ReturnType of a Promise
+
+interface User {
+    id: number,
+    name: string,
+    username: string,
+    email: string,
 }
 
-const store = new StateObj('Will')
-console.log(store.state);
-store.state = 'William'
+const fetchUsers = async (): Promise<User[]> => {
 
-//This doesn't work as we already declared that the type of object targeted is a string when we typed 'Will' when creating an instance of the class above
-//store.state = 21
+    const data = await fetch(
+        'https://jsonplaceholder.typicode.com/users'
+    ).then(res => {
+        return res.json()
+    }).catch(err => {
+        if (err instanceof Error) console.log(err.message)
+    })
+    return data
+}
 
-//The console log below works as we specified what kind of types we could accept when creating an instance of the StateObj class
-const myState = new StateObj<(string | number | boolean)[]>([21])
-myState.state = ['Will', 43, true]
-console.log(myState.state);
+
+//How do we use Awaited?
+
+//When we hover over FetchUsersReturnType, it shows we have a Promise but we don't want that, we want the result
+//type FetchUsersReturnType = ReturnType<typeof fetchUsers>
+
+type GetUsersReturnType = Awaited<ReturnType<typeof fetchUsers>>
+
+//Now we get the result desired 
+fetchUsers().then(users => console.log(users))
+
 

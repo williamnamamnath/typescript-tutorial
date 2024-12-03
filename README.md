@@ -19,3 +19,4 @@ Visit the various commits for more information.
 - **Chapter 6**: Working with classes, getters and setters
 - **Chapter 7**: Index signatures and keyof assertions
 - **Chapter 8**: Generics
+- **Chapter 9**: Utility types
