@@ -26,6 +26,6 @@ The different commits show what I've learned in each of the chapters below.
 -----
 
 
-##  🛠 TypeScript Project
+##  🛠 My List App - A TypeScript Project
 
-A TypeScript project that includes what I've learned will soon be linked here...
+You may find my (in-progress) TypeScript project by visiting its own separate [repository](https://github.com/williamnamamnath/list-app)
