@@ -11,7 +11,7 @@ The different commits show what I've learned in each of the chapters below.
 ## 🧠 What I've Learned So Far
 
 - **Intro/Chapter 1**: What is Typescript?
-- **Chapter 1**: Setting up a quick project adapted for Typescript
+- **Chapter 1**: Setting up a work environment adapted for Typescript
 - **Chapter 2**: Basic types and union types
 - **Chapter 3**: Arrays and objects, brief comparison of type vs interface, enums
 - **Chapter 4**: Type aliases, the literal and never type, functions, optional and rest parameters
