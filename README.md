@@ -2,7 +2,7 @@
 
 This repository tracks my progress and code while I'm working with Dave Gray's [Typescript tutorial](https://www.youtube.com/playlist?list=PL0Zuz27SZ-6NS8GXt5nPrcYpust89zq_b) on YouTube. 
 
-Visit the various commits for more information.
+The different commits show what I've learned in each of the chapters below.
 
 
 -----
@@ -20,3 +20,12 @@ Visit the various commits for more information.
 - **Chapter 7**: Index signatures and keyof assertions
 - **Chapter 8**: Generics
 - **Chapter 9**: Utility types
+
+
+
+-----
+
+
+##  🛠 TypeScript Project
+
+A TypeScript project that includes what I've learned will soon be linked here...
