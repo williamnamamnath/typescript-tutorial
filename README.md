@@ -18,3 +18,4 @@ Visit the various commits for more information.
 - **Chapter 5**: Type assertions/type casting, assertions, working with the DOM
 - **Chapter 6**: Working with classes, getters and setters
 - **Chapter 7**: Index signatures and keyof assertions
+- **Chapter 8**: Generics

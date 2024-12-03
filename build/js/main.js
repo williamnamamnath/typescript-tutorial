@@ -1,58 +1,129 @@
 "use strict";
-//Index signatures
-// interface TransactionObj {
-//    [index: string]: number //also valid
-//     Pizza: number,
-//     Books: number,
-//     Job: number
-// }
-const todaysTransactions = {
-    Pizza: -10,
-    Books: -5,
-    Job: 50
+//Generics act as a placeholder for the type of a value
+const stringEcho = (arg) => arg;
+//or
+//<x> is a type variable/parameter. The example below is a generic
+const echo = (arg) => arg;
+const isObj = (arg) => {
+    return (typeof arg === 'object' && !Array.isArray(arg) && arg !== null);
 };
-console.log(todaysTransactions.Pizza);
-console.log(todaysTransactions['Pizza']);
-let prop = 'Pizza';
-console.log(todaysTransactions[prop]);
-const todaysNet = (transactions) => {
-    let total = 0;
-    for (const transaction in transactions) {
-        total += transactions[transaction];
+console.log(isObj(true)); //returns false
+console.log(isObj('John')); //returns false
+console.log(isObj([1, 2, 3])); //returns false
+console.log(isObj({ name: 'John' })); //returns true
+console.log(isObj(null)); //returns false
+const isTrue = (arg) => {
+    if (Array.isArray(arg) && !arg.length) {
+        return { arg, is: false };
     }
-    return total;
+    if (isObj(arg) && !Object.keys(arg).length) {
+        return { arg, is: false };
+    }
+    return { arg, is: !!arg };
 };
-console.log(todaysNet(todaysTransactions));
-console.log(todaysTransactions['Will']); //returns undefined. TS allows this but index signatures are not entirely safe
-const student = {
-    name: 'Will',
-    GPA: 3.5,
-    classes: [100, 200] //'?' means optional
+console.log(isTrue(false));
+console.log(isTrue(0));
+console.log(isTrue(true));
+console.log(isTrue(1));
+console.log(isTrue('Will'));
+console.log(isTrue(''));
+console.log(isTrue(null));
+console.log(isTrue(undefined));
+console.log(isTrue({}));
+console.log(isTrue({ name: 'Will' }));
+console.log(isTrue([]));
+console.log(isTrue([1, 2, 3]));
+console.log(isTrue(NaN));
+console.log(isTrue(-0));
+const checkBooleanValue = (arg) => {
+    if (Array.isArray(arg) && !arg.length) {
+        return { value: arg, is: false };
+    }
+    if (isObj(arg) && !Object.keys(arg).length) {
+        return { value: arg, is: false };
+    }
+    return { value: arg, is: !!arg };
 };
-//Even if we don't have a 'test' key yet, this is still valid thanks to the index signature in the Student interface. "Maybe there will be a 'test' created eventually"
-//console.log(student.test);
-//If key is not defined in the interface, there is another way to proceed. The console log below results in an error since the key is commented out above. 
-// for (const key in student) {
-//     console.log(`${key}: ${student[key]}`);
-// }
-//This works even though the key is not explicitly defined. keyof allows us to use the type literals as defined in the Student interface
-for (const key in student) {
-    console.log(`${key}: ${student[key]}`);
+//Narrowing the generic type by extending the type value <T>, the type will need to have an 'id' property
+const processUser = (user) => {
+    return user;
+};
+console.log(processUser({ id: 1, name: 'Will' }));
+//This wouldn't work as when we're calling the 'processUser' function, we're missing the HasId type
+//console.log(processUser({ name: 'Will' }));
+//T can be seen as an object that has an id, K is the keys of T (the user objects)
+const getUsersProperty = (users, key) => {
+    return users.map(user => user[key]);
+};
+const usersArray = [
+    {
+        "id": 1,
+        "name": "Leanne Graham",
+        "username": "Bret",
+        "email": "Sincere@april.biz",
+        "address": {
+            "street": "Kulas Light",
+            "suite": "Apt. 556",
+            "city": "Gwenborough",
+            "zipcode": "92998-3874",
+            "geo": {
+                "lat": "-37.3159",
+                "lng": "81.1496"
+            }
+        },
+        "phone": "1-770-736-8031 x56442",
+        "website": "hildegard.org",
+        "company": {
+            "name": "Romaguera-Crona",
+            "catchPhrase": "Multi-layered client-server neural-net",
+            "bs": "harness real-time e-markets"
+        }
+    },
+    {
+        "id": 2,
+        "name": "Ervin Howell",
+        "username": "Antonette",
+        "email": "Shanna@melissa.tv",
+        "address": {
+            "street": "Victor Plains",
+            "suite": "Suite 879",
+            "city": "Wisokyburgh",
+            "zipcode": "90566-7771",
+            "geo": {
+                "lat": "-43.9509",
+                "lng": "-34.4618"
+            }
+        },
+        "phone": "010-692-6593 x09125",
+        "website": "anastasia.net",
+        "company": {
+            "name": "Deckow-Crist",
+            "catchPhrase": "Proactive didactic contingency",
+            "bs": "synergize scalable supply-chains"
+        }
+    },
+];
+//When typing out a string hwn calling the getUsersProperty function, Intellisense gives us a list of objects to choose from usersArray defined above
+console.log(getUsersProperty(usersArray, "email"));
+console.log(getUsersProperty(usersArray, "username"));
+//Using a generic in a class
+class StateObj {
+    constructor(value) {
+        this.data = value;
+    }
+    get state() {
+        return this.data;
+    }
+    set state(value) {
+        this.data = value;
+    }
 }
-//This will reference the types used in the 'student' const, which are strings, numbers and array of numbers
-Object.keys(student).map(key => {
-    console.log(student[key]);
-});
-const logStudentKey = (student, key) => {
-    console.log(`Student ${key}: ${student[key]}`);
-};
-logStudentKey(student, 'GPA');
-logStudentKey(student, 'name');
-const monthlyIncomes = {
-    salary: 500,
-    bonus: 100,
-    sidehustle: 250
-};
-for (const revenue in monthlyIncomes) {
-    console.log(monthlyIncomes[revenue]);
-}
+const store = new StateObj('Will');
+console.log(store.state);
+store.state = 'William';
+//This doesn't work as we already declared that the type of object targeted is a string when we typed 'Will' when creating an instance of the class above
+//store.state = 21
+//The console log below works as we specified what kind of types we could accept when creating an instance of the StateObj class
+const myState = new StateObj([21]);
+myState.state = ['Will', 43, true];
+console.log(myState.state);
